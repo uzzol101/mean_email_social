@@ -1,0 +1,24 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+		<h2 class="page-header">User Login</h2>
+			<form (submit)="onLoginSubmit()" role="form">
+			
+				<div class="form-group">
+					<label for="">Username</label>
+					<input [(ngModel)]="username" name="username" type="text" class="form-control">
+				</div>
+
+				<div class="form-group">
+					<label for="">Password</label>
+					<input [(ngModel)]="password" name="password" type="text" class="form-control">
+				</div>
+				<button type="submit" class="btn btn-primary">Login</button>
+				<button (click)="fbLogin('facebook')" type="button" class="btn btn-primary">Facebook</button>
+			</form>
+		
+		</div>
+	</div>
+</div>
+
+<button (click)="fbRedirect()" class="btn-danger">Redirect</button>

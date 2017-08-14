@@ -1,0 +1,23 @@
+<div *ngIf="data" class="container">
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h3 class="page-header">User info</h3>
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Username</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{{data.user.name}} </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
