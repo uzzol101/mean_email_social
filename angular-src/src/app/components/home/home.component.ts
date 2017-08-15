@@ -13,6 +13,9 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   	this.token = this.route.snapshot.paramMap.get("id");
   	this.setToken();
+    setTimeout(()=>{
+      this.router.navigate(["/profile"]);
+    },100);
 
   }
 

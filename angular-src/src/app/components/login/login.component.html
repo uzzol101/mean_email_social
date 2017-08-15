@@ -15,10 +15,15 @@
 				</div>
 				<button type="submit" class="btn btn-primary">Login</button>
 				<button (click)="fbLogin('facebook')" type="button" class="btn btn-primary">Facebook</button>
+				<button (click)="twtLogin('facebook')" type="button" class="btn btn-info">twitter</button>
+				<button (click)="googleLogin()" type="button" class="btn btn-warning">Google</button>
+				
+
+
 			</form>
+			<a href="http://127.0.0.1:3000/auth/twitter" target="_blank">twitter</a>
 		
 		</div>
 	</div>
 </div>
 
-<button (click)="fbRedirect()" class="btn-danger">Redirect</button>

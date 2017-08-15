@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService } from "../../services/auth.service";
+import {SharedService } from "../../services/shared.service";
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -7,13 +8,18 @@ import {AuthService } from "../../services/auth.service";
 })
 export class ProfileComponent implements OnInit {
 	data:Object;
-  constructor(private authService:AuthService) { }
+  constructor(private authService:AuthService,private shared:SharedService) { }
 
   ngOnInit() {
-  	this.authService.getProfile().subscribe(data=>{
+  	this.authService.getProfile().subscribe((data:any)=>{
   		 this.data = data;
+       this.shared.getFromLogin(data.user.name);
+       localStorage.setItem('user',data.user.name);
+
 
   	});
+
+    
   }
 
 }

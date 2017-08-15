@@ -36,5 +36,11 @@ export class AuthService {
       return res;
     });
   }
+ // twtUser(){
+ //  return this.http.get("http://127.0.0.1:3000/auth/twitter",{observe: 'response'}).map(res=>{
+ //      return res;
+ //    });
+ //  }
+
 
 }

@@ -4,7 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bcrypt = require('bcrypt');
 var session = require("express-session");
+var qs = require('querystring');
 var passport = require('passport');
+var request = require('request');
+var cors = require('cors');
 var jwt = require('jsonwebtoken');
 var mongoose = require("mongoose");
 var cookieParser = require('cookie-parser');
@@ -15,8 +18,12 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+/*
+|-------------------------------------------------------------
+|  MONGOOSE CONFIG
+|-------------------------------------------------------------
+*/
 
-// ================ MONGOOSE SETUP ===============
 
 mongoose.connect("mongodb://127.0.0.1/mean_full",(err)=>{
 	if(err){
@@ -38,14 +45,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/*
+|-------------------------------------------------------------
+|  PASSPORT CONFIG
+|-------------------------------------------------------------
+*/
 
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
-    console.log("From serialize");
-    console.log(user);
+   // generate token for social user
    var tok = jwt.sign(user, 'secret', { expiresIn: '1h' });
    token = "JWT " +tok;  
 
@@ -59,8 +70,12 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
+/*
+|-------------------------------------------------------------
+|  CORS
+|-------------------------------------------------------------
+*/
 
-// ============= CORS ==============
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
@@ -69,7 +84,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// ====================	 passport-jwt =====================
+/*
+|-------------------------------------------------------------
+|   PASSPORT JWT
+|-------------------------------------------------------------
+*/
 
 var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -91,7 +110,12 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
     });
 }));
 
-// ================== 	passport facebook ================
+/*
+|-------------------------------------------------------------
+|   LOGIN WITH FACEBOOK
+|-------------------------------------------------------------
+*/
+
  FacebookStrategy = require('passport-facebook').Strategy;
  passport.use(new FacebookStrategy({
      clientID: "726688227533356",
@@ -99,7 +123,7 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
      callbackURL: "http://localhost:3000/auth/facebook/callback",
      profileFields: ['id', 'displayName', 'emails']
  }, function(accessToken, refreshToken, profile,done) {
-      console.log(accessToken);
+     
      User.findOne({ email: profile._json.email }, (err, user) => {
          if (err) {
              done(err);
@@ -129,11 +153,115 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
             // done(null, user);
             }));
 
+/*
+|-------------------------------------------------------------
+|   LOGIN WITH TWITTER
+|-------------------------------------------------------------
+*/
+ TwitterStrategy = require('passport-twitter').Strategy;
+
+passport.use(new TwitterStrategy({
+    consumerKey: "LsA52qkjgoqE1r5ubpoX3OwEK",
+    consumerSecret: "zqFGKvUz5EyzhYeemnn4D0XFcKEGrKjnyR1FydulnaI8UkX4xn"
+,
+    callbackURL: "http://127.0.0.1:3000/auth/twitter/callback",
+    // importat for getting user email
+   userProfileURL: "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
+  },
+  function(token, tokenSecret, profile, done) {
+
+      User.findOne({ email: profile.emails[0].value }, (err, user) => {
+         if (err) {
+             done(err);
+         }
+        
+        if(user){
+          
+            return done(null,user);
+           
+            }
+            else {
+                console.log("creating new user");
+                var user = new User({
+                    username: profile._json.name,
+                    email: profile.emails[0].value
+                });
+                user.save((err, user) => {
+                    if (err) {
+                        done(err);
+                    } else {
+
+                        return done(null, user);
+                    }
+                });
+            }
+            });
+  }
+));
+
+
+/*
+|-------------------------------------------------------------
+|   LOGIN WITH GOOGLE
+|-------------------------------------------------------------
+*/
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: "451074809708-ov6sjl996fibp5mi40tete8ashprhl16.apps.googleusercontent.com",
+    clientSecret: "4ebFxk40kVTz_KcwqnW5xnfT",
+    callbackURL: "http://localhost:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+ 
+      User.findOne({ email: profile.emails[0].value }, (err, user) => {
+         if (err) {
+             done(err);
+         }
+        
+        if(user){
+          
+            return done(null,user);
+           
+            }
+            else {
+                console.log("creating new user");
+                var user = new User({
+                    username: profile.name.givenName,
+                    email: profile.emails[0].value
+                });
+                user.save((err, user) => {
+                    if (err) {
+                        done(err);
+                    } else {
+
+                        return done(null, user);
+                    }
+                });
+            }
+            });
+  }
+));
+
+
+
+/*
+|-------------------------------------------------------------
+|   ROUTES
+|-------------------------------------------------------------
+*/
+
+
 app.use('/', index);
 app.use('/users', users);
 
 
-// =============================    ROUTES ==================
+/*
+|-------------------------------------------------------------
+|  ROUTES
+|-------------------------------------------------------------
+*/
+
 app.post('/register', (req, res) => {
             var newUser = {
                 username: req.body.username,
@@ -235,27 +363,51 @@ app.get('/profile', passport.authenticate('jwt', { session: false}),
     }
 );
 
+/*
+|-------------------------------------------------------------
+|  SOCIAL LOGIN AREA
+|-------------------------------------------------------------
+*/
+
+
 app.get('/auth/facebook', passport.authenticate('facebook', {scope:"email"}),(req,res)=>{
 
 });
 app.get('/auth/facebook/callback', passport.authenticate('facebook', 
 {failureRedirect: '/login' }),(req,res)=>{
-
+ // Successful authentication, redirect home.
   res.redirect("http://localhost:4200/home/"+token);
 });
 
-app.get("/social",(req,res)=>{
-   if(req.isAuthenticated()){
-    res.send(req.user);
 
-   }else{
-    res.json({
-        success:false
-    })
-   }
-});
+app.get('/auth/twitter',
+  passport.authenticate('twitter'),(req,res)=>{
+
+  });
+
+app.get('/auth/twitter/callback', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect("http://localhost:4200/home/"+token);
+  });
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile',"email"] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+   res.redirect("http://localhost:4200/home/"+token);
+  });
 
 
+/*
+|-------------------------------------------------------------
+|   APP LISTENING PORT
+|-------------------------------------------------------------
+*/
 
 
 app.listen(3000,()=>{

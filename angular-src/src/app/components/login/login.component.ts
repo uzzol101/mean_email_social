@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem("user",data.user.username);
           this.sharedService.getFromLogin(data.user.username);
   				this.flash.show(data.msg,{cssClass:"alert-success",timeout:3000});
-  				this.router.navigate(["/home"]);
+  				this.router.navigate(["/profile"]);
   			}else{
   				this.flash.show(data.msg,{cssClass:"alert-danger",timeout:3000});
   			}
@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
      if(data.url){
        // handling fb callback url here.
        // window.open(data.url);
+       
        window.location.href = data.url
 
      }
@@ -52,5 +53,19 @@ export class LoginComponent implements OnInit {
    });
  }
 
+ 
+twtLogin(){
+  
+    window.location.href ="http://127.0.0.1:3000/auth/twitter";
+   console.log("click button");
+ }
+
+googleLogin(){
+   window.location.href ="http://localhost:3000/auth/google";
+   console.log("click button");
+}
+
+
 
 }
+
