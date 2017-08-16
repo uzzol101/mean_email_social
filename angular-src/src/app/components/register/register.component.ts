@@ -11,10 +11,13 @@ export class RegisterComponent implements OnInit {
 	username:String;
 	email:String;
 	password:String;
+
   constructor(private authService:AuthService,private validator:ValidatorService,private falsh:FlashMessagesService) { }
 
   ngOnInit() {
   }
+
+  
 
   onSubmit(){
   	let newUser = {
@@ -26,6 +29,9 @@ export class RegisterComponent implements OnInit {
   	if(this.validator.validateRegistration(newUser)){
   		this.authService.registerUser(newUser).subscribe((data:any)=>{
   			this.falsh.show(data.msg,{cssClass:"alert-success",timeout:2000});
+      
+     
+
   		});
   	}
   }

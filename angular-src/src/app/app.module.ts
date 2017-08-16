@@ -14,9 +14,13 @@ import { FlashMessagesModule } from 'angular2-flash-messages';
 // import { Angular2SocialLoginModule } from "angular2-social-login";
 // ================ services ================
 import {AuthService} from "./services/auth.service";
+import {AuthGuardService} from "./services/auth-guard.service";
 import {SharedService} from "./services/shared.service";
 import {ValidatorService} from "./services/validator.service";
 import { ProfileComponent } from './components/profile/profile.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { ActivateComponent } from './components/activate/activate.component';
+import { ResendComponent } from './components/resend/resend.component';
 
 
 let providers = {
@@ -33,7 +37,10 @@ let providers = {
     NavbarComponent,
     RegisterComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    WelcomeComponent,
+    ActivateComponent,
+    ResendComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +50,7 @@ let providers = {
     FlashMessagesModule,
     AppRoutingModule
   ],
-  providers: [AuthService,ValidatorService,SharedService],
+  providers: [AuthService,ValidatorService,SharedService,AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,6 +2,7 @@
 	<div class="row">
 		<div class="col-sm-6 col-sm-offset-3">
 		<h2 class="page-header">User Login</h2>
+		<button *ngIf="showHide" class="btn btn-alert"><a routerLink="/resend">Resend Activation Link</a></button>
 			<form (submit)="onLoginSubmit()" role="form">
 			
 				<div class="form-group">

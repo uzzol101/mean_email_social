@@ -16,6 +16,8 @@
     "jsonwebtoken": "^7.4.2",
     "mongoose": "^4.11.6",
     "morgan": "~1.8.1",
+    "nodemailer": "^4.0.1",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth20": "^1.0.0",
@@ -23,6 +25,7 @@
     "passport-twitter": "^1.0.4",
     "querystring": "^0.2.0",
     "request": "^2.81.0",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "xoauth2": "^1.2.0"
   }
 }

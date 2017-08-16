@@ -1,3 +1,6 @@
+// sendgrid api key: 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
+
+
 var mongoose = require("mongoose");
 var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
@@ -7,14 +10,21 @@ var UserSchema = new Schema({
 		validator:(name)=> name.length > 2,
 		message:"Name must be longer than 2 character" 
 	}},
-	password:{type:String},
+	password:{
+		type:String,required:true,validate:{
+			validator:(password)=> password.length >= 4,
+			message:"password must be morethan 3 letters"
+		}
+	},
 	email:{type:String,required:true,lowercase:true,unique:true},
 	social:{
 		provider:String,
-		name:String,
-		name:String,
-		social_id:String
-	}
+		social_id:String,
+		gender:String,
+		image:String
+	},
+	temporarytoken:{type:String},
+	active:{type:Boolean,default:false}
 });
 
 

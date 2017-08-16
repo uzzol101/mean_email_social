@@ -8,18 +8,21 @@ import {SharedService } from "../../services/shared.service";
 })
 export class ProfileComponent implements OnInit {
 	data:Object;
+ 
   constructor(private authService:AuthService,private shared:SharedService) { }
 
   ngOnInit() {
   	this.authService.getProfile().subscribe((data:any)=>{
   		 this.data = data;
-       this.shared.getFromLogin(data.user.name);
-       localStorage.setItem('user',data.user.name);
+       this.shared.getFromLogin(data.user);
+       localStorage.setItem('user',data.user.username);
 
 
   	});
 
     
   }
+
+
 
 }
