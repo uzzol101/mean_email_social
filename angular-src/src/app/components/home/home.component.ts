@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute,Router,ParamMap}from "@angular/router";
-
+import {AuthService} from '../../services/auth.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -8,16 +9,21 @@ import {ActivatedRoute,Router,ParamMap}from "@angular/router";
 })
 export class HomeComponent implements OnInit {
 	token;
-  constructor(private route:ActivatedRoute,private router:Router) { }
+ 
+  constructor(private authService:AuthService, private route:ActivatedRoute,private router:Router,private flash:FlashMessagesService) { }
 
   ngOnInit() {
   	this.token = this.route.snapshot.paramMap.get("id");
   	this.setToken();
+    setTimeout(()=>{
+      this.router.navigate(["/profile"]);
+    },100);
 
   }
 
   setToken(){
   	localStorage.setItem("token",this.token);
+ 
   }
 
 }
