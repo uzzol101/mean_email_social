@@ -100,7 +100,7 @@ let transporter = nodemailer.createTransport({
    service: 'Gmail',
     auth: {
         user:"uzzolmean@gmail.com",
-        pass:"08520280"
+        pass:"********"
 
         // xoauth2:xoauth2.createXOAuth2Generator({
         //      user: 'uzzolmean@gmail.com',
